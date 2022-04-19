@@ -22,4 +22,8 @@ Date: 13/3/2022
 Time: 22:10
 Phone Number: +919819439416
 Message: Noob
+--------------------Date: 21/3/2022
+Time: 22:17
+Phone Number: +919833371632
+Message: 1.Speech to text(Search Navigation)2.Text to speech(Navigation)3.Tensorflow opencv(Controlling Video Player)4.Database Connectivity for Playlist5.SMS Whatsapp Email Connectivity6.In-Built Camera7.GUI
 --------------------
