@@ -1,90 +1,113 @@
+from ctypes import alignment
 from tkinter import *
 from PIL import ImageTk, Image
-
 from STT import playvideo
-
-from pywhatkit import playonyt
 from TTS import *
 from STT import *
 from Clicker import *
 from HandDetection import *
+from Playlist import *
+from AudioBook import *
+from VoiceDraw import *
 
-def playvideox():
-    tts("Search Button Clicked")
-    text= entry1.get()
-    playvideo(text)
-    
+root=Tk() #main container object
+root.title("TinFly")
+root.state("zoomed")
+
+# functions
 def sttx():
     tts("Speak Video or Music Title")
     stt()
-
+    
+def playvideox():
+    tts("Search Button Clicked")
+    text= query.get()
+    playvideo(text)
+    
 def gesturesx():
     tts("Gestures Recognition Activated")
     handDetect()
 
 
-window=Tk() #main container object
-window.title("TinFly")
-#window.state("zoomed")
 
-mic= Image.open("mic.png")
-resize_image = mic.resize((25,25))
+#images
+mic= Image.open("Photos/mic.png")
+resize_image = mic.resize((70,70))
 mic = ImageTk.PhotoImage(resize_image)
 
-search= Image.open("search.png")
-resize_image = search.resize((25,25))
+search= Image.open("Photos/search.png")
+resize_image = search.resize((70,70))
 search = ImageTk.PhotoImage(resize_image)
 
-downloads= Image.open("downloads.png")
+downloads= Image.open("Photos/downloads.png")
 resize_image = downloads.resize((25,25))
 downloads = ImageTk.PhotoImage(resize_image)
 
-gestures= Image.open("gestures.png")
-resize_image = gestures.resize((25,25))
+gestures= Image.open("Photos/gestures.png")
+resize_image = gestures.resize((100,100))
 gestures = ImageTk.PhotoImage(resize_image)
 
-title= Image.open("TinFly.png")
-resize_image = title.resize((170,75))
-title = ImageTk.PhotoImage(resize_image)
+guiimg = Image.open("Photos/gui.jpg")
+resize_image = guiimg.resize((1920,1024))
+guiimg = ImageTk.PhotoImage(resize_image)
 
-frame = Frame(master=window,width=900,height=300)
+playlistimg = Image.open("Photos/playlist.png")
+resize_image = playlistimg.resize((200,200))
+playlistimg = ImageTk.PhotoImage(resize_image)
+
+profileimg = Image.open("Photos/profile_icon.png")
+resize_image = profileimg.resize((100,100))
+profileimg = ImageTk.PhotoImage(resize_image)
+
+bookimg = Image.open("Photos/book.png")
+resize_image = bookimg.resize((200,200))
+bookimg = ImageTk.PhotoImage(resize_image)
+
+paintimg = Image.open("Photos/paint.png")
+resize_image = paintimg.resize((200,200))
+paintimg = ImageTk.PhotoImage(resize_image)
+
+
+
+frame = Frame(master=root,width=900,height=300)
 frame.pack()
 
-img = Image.open("background.png")
-resize_image = img.resize((800,300))
-img = ImageTk.PhotoImage(resize_image)
+guilabel = Label(master= frame, image = guiimg)
+guilabel.pack()
 
-label = Label(master= frame, image = img)
-label.pack()
+def drawerscreen():
+    gesturebtn = Button(master=frame,text="Enable Gestures",image = gestures, command=gesturesx)
+    gesturebtn.place(x=40,y=800)
+    profilebtn = Label(master=frame,text="Profile",image =profileimg)
+    profilebtn.place(x=240,y=100)
 
-label1 = Label(master=frame, image = title, background="#ffffff")
-label1.place(x=350, y=50)
 
-label2 = Label(master=frame, text="Search", background="#ffffff")
-label2.place(x=180, y=150)
-label2.config(font=('Arial', 15))
+#homescreen
+query = Entry(master=frame, background="#ffffff", font=("Helvetica", 32))
+query.place(x=800,y=250,width=790,height=75)
 
-entry1 = Entry(master=frame, background="#ffffff",width=40)
-entry1.place(x=300,y=155)
+searchbtn = Button(master=frame,text="Search",image = search, command=playvideox)
+searchbtn.place(x=1610,y=250)
 
-b1 = Button(master=frame,text="Search",image= search,command=playvideox)
-b1.place(x=370,y=200)
+audiobtn = Button(master=frame,text="Audio",image = mic, command=sttx)
+audiobtn.place(x=1700,y=250)
 
-b2 = Button(master=frame,text="Audio",image = mic, command=sttx)
-b2.place(x=420,y=200)
+playlistbtn = Button(master=frame,text="Playlist",image = playlistimg, command=ask_directory)
+playlistbtn.place(x=800,y=450)
+playlisttext=Label(master=frame,text="Create Playlist",justify='center',font=("Helvetica"))
+playlisttext.place(x=800,y=660,width=205)
 
-b3 = Button(master=frame,text="Enable Gestures",image = gestures, command=gesturesx)
-b3.place(x=470,y=200)
+bookbtn = Button(master=frame,text="E-Book",image = bookimg, command=ebookreader)
+bookbtn.place(x=1200,y=450)
+booktext=Label(master=frame,text="Select E-Book",justify='center',font=("Helvetica"))
+booktext.place(x=1200,y=660,width=205)
 
+paintbtn = Button(master=frame,text="Paint",image = paintimg, command=voicedraw)
+paintbtn.place(x=1600,y=450)
+painttext=Label(master=frame,text="Voice Draw",justify='center',font=("Helvetica"))
+painttext.place(x=1600,y=660,width=205)
+
+
+drawerscreen()
 tts("Welcome To Tinfly")
-window.mainloop() #displays main window
-
-
-    
-# rtts("Welcome.txt")
-# deletefile("output.mp3")
-# tts("Speak Video or Music title")
-# deletefile("output.mp3")
-# # stt()
-# playonyt("Jugnu")
-# handDetect()
+root.mainloop()
