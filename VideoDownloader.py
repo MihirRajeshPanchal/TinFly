@@ -1,12 +1,10 @@
 from pytube import YouTube
-def videodownload(link):
+from tkinter import filedialog
+from TTS import tts
+
+def videodownload(link,filepath):
     my_video = YouTube(link)
-    # print("********************Download video*************************")
-    # #get all the stream resolution for the 
-    # '''for stream in my_video.streams:
-    #     print(stream)
-    # '''
-    # #set stream resolution
     my_video = my_video.streams.get_highest_resolution()
-    my_video.download()
+    my_video.download(output_path=filepath)
     print("Download Complete")
+    tts("Download Complete")

@@ -6,5 +6,5 @@ from os.path import isfile, join
 def ask_directory():
     playlistdirname = filedialog.askdirectory()
     playlistfiles = [f for f in listdir(playlistdirname) if isfile(join(playlistdirname, f))]
-    playlist=[i for i in playlistfiles if i.endswith('.mp3'or'.wav')]
+    playlist=[i for i in playlistfiles if i.endswith('.mp4'or'.wav')]
     print(playlist)

@@ -1,7 +1,6 @@
-from ctypes import alignment
+import pywhatkit as pwt
 from tkinter import *
 from PIL import ImageTk, Image
-from STT import playvideo
 from TTS import *
 from STT import *
 from Clicker import *
@@ -9,6 +8,7 @@ from HandDetection import *
 from Playlist import *
 from AudioBook import *
 from VoiceDraw import *
+from VideoDownloader import *
 
 root=Tk() #main container object
 root.title("TinFly")
@@ -28,7 +28,13 @@ def gesturesx():
     tts("Gestures Recognition Activated")
     handDetect()
 
-
+def downloadvideo():
+    tts("Video Download")
+    text=query.get()
+    t=pwt.playonyt(text,open_video=False)
+    print(t)
+    file_path = filedialog.askdirectory()
+    videodownload(t,file_path)
 
 #images
 mic= Image.open("Photos/mic.png")
@@ -40,7 +46,7 @@ resize_image = search.resize((70,70))
 search = ImageTk.PhotoImage(resize_image)
 
 downloads= Image.open("Photos/downloads.png")
-resize_image = downloads.resize((25,25))
+resize_image = downloads.resize((100,100))
 downloads = ImageTk.PhotoImage(resize_image)
 
 gestures= Image.open("Photos/gestures.png")
@@ -78,6 +84,8 @@ guilabel.pack()
 def drawerscreen():
     gesturebtn = Button(master=frame,text="Enable Gestures",image = gestures, command=gesturesx)
     gesturebtn.place(x=40,y=800)
+    downloadbtn = Button(master=frame,text="Download",image = downloads, command=downloadvideo)
+    downloadbtn.place(x=240,y=800)
     profilebtn = Label(master=frame,text="Profile",image =profileimg)
     profilebtn.place(x=240,y=100)
 
@@ -106,7 +114,6 @@ paintbtn = Button(master=frame,text="Paint",image = paintimg, command=voicedraw)
 paintbtn.place(x=1600,y=450)
 painttext=Label(master=frame,text="Voice Draw",justify='center',font=("Helvetica"))
 painttext.place(x=1600,y=660,width=205)
-
 
 drawerscreen()
 tts("Welcome To Tinfly")
