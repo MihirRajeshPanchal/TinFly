@@ -1,3 +1,4 @@
+from doctest import master
 import pywhatkit as pwt
 from tkinter import *
 from PIL import ImageTk, Image
@@ -9,6 +10,7 @@ from Playlist import *
 from AudioBook import *
 from VoiceDraw import *
 from VideoDownloader import *
+from Whatsapp import *
 
 root=Tk() #main container object
 root.title("TinFly")
@@ -36,6 +38,57 @@ def downloadvideo():
     file_path = filedialog.askdirectory()
     videodownload(t,file_path)
 
+
+def whatsappWindow():
+    
+    def whatsappsend():
+        phno=phnoentry.get()
+        msg=msgentry.get()
+        whatsappchecksend(phno,msg)
+        
+    wWindow=Toplevel(master)
+    wWindow.title("Whatsapp")
+    wWindow.state("zoomed")
+    
+    #images
+    bgimg = Image.open("Photos/bg.jpg")
+    resize_image = bgimg.resize((1920,1024))
+    bgimg = ImageTk.PhotoImage(resize_image)
+
+    tinflyimg = Image.open("Photos/tinfly.png")
+    resize_image = tinflyimg.resize((423,150))
+    tinflyimg = ImageTk.PhotoImage(resize_image)
+    
+    sendimg = Image.open("Photos/whatsappsend.png")
+    resize_image = sendimg.resize((400,144))
+    sendimg = ImageTk.PhotoImage(resize_image)
+    
+    whatsappframe = Frame(master=wWindow,width=1680,height=1440)
+    whatsappframe.pack()    
+    
+    whatsappbg = Label(master= whatsappframe, image = bgimg)
+    whatsappbg.pack()
+    
+    tinflylabel = Label(master=whatsappframe,text="TinFly",image = tinflyimg)
+    tinflylabel.place(x=727,y=50)
+    
+    phnotext=Label(master=whatsappframe,text="Enter Phone Number",justify='center',font=("Helvetica"))
+    phnotext.place(x=400,y=275,width=205)
+    
+    phnoentry = Entry(master=whatsappframe, background="#ffffff", font=("Helvetica", 32))
+    phnoentry.place(x=800,y=250,width=790,height=75)
+    
+    msgtext=Label(master=whatsappframe,text="Enter Message",justify='center',font=("Helvetica"))
+    msgtext.place(x=400,y=475,width=205)
+    
+    msgentry = Entry(master=whatsappframe, background="#ffffff", font=("Helvetica", 32))
+    msgentry.place(x=800,y=450,width=790,height=200)
+    
+    sendbtn = Button(master=whatsappframe,text="send",image = sendimg, command=whatsappsend)
+    sendbtn.place(x=750,y=750)
+    
+    wWindow.mainloop()
+    
 #images
 mic= Image.open("Photos/mic.png")
 resize_image = mic.resize((70,70))
@@ -48,6 +101,10 @@ search = ImageTk.PhotoImage(resize_image)
 downloads= Image.open("Photos/downloads.png")
 resize_image = downloads.resize((100,100))
 downloads = ImageTk.PhotoImage(resize_image)
+
+whatsapp= Image.open("Photos/whatsapp.png")
+resize_image = whatsapp.resize((100,100))
+whatsapp = ImageTk.PhotoImage(resize_image)
 
 gestures= Image.open("Photos/gestures.png")
 resize_image = gestures.resize((100,100))
@@ -75,7 +132,7 @@ paintimg = ImageTk.PhotoImage(resize_image)
 
 
 
-frame = Frame(master=root,width=900,height=300)
+frame = Frame(master=root,width=1680,height=1440)
 frame.pack()
 
 guilabel = Label(master= frame, image = guiimg)
@@ -86,6 +143,8 @@ def drawerscreen():
     gesturebtn.place(x=40,y=800)
     downloadbtn = Button(master=frame,text="Download",image = downloads, command=downloadvideo)
     downloadbtn.place(x=240,y=800)
+    whatsappbtn = Button(master=frame,text="Whatsapp",image = whatsapp, command=whatsappWindow)
+    whatsappbtn.place(x=440,y=800)
     profilebtn = Label(master=frame,text="Profile",image =profileimg)
     profilebtn.place(x=240,y=100)
 
