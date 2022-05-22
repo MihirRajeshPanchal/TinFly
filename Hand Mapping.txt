@@ -1,6 +1,6 @@
-Rock Sign-Pause/play
+Rock Sign-FullScreen
+Fist-Forward
 Thumbs Up-Volume Up
 Thumbs Down-Volume Down
-Okay Sign-Forward
+Okay Sign-Play/Pause
 Victory Sign-Rewind
-Smile Sign-Exit(Hand Detect)

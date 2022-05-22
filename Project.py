@@ -2,6 +2,7 @@ from doctest import master
 import pywhatkit as pwt
 from tkinter import *
 from PIL import ImageTk, Image
+from PlaySingleMusic import musicfileopen
 from TTS import *
 from STT import *
 from Clicker import *
@@ -38,6 +39,22 @@ def downloadvideo():
     file_path = filedialog.askdirectory()
     videodownload(t,file_path)
 
+def googlefun():
+    tts("Google Search")
+    text=query.get()
+    pwt.search(text)
+
+def infofun():
+    tts("Information Search")
+    text=query.get()
+    try:
+        draw=pwt.info(text,return_value=True)
+        # print("Hi : ",draw)
+        tts(draw)
+        tdraw(draw)
+    except:
+        str="No Information about "+text
+        tts(str)
 
 def whatsappWindow():
     
@@ -110,6 +127,14 @@ gestures= Image.open("Photos/gestures.png")
 resize_image = gestures.resize((100,100))
 gestures = ImageTk.PhotoImage(resize_image)
 
+googleimg= Image.open("Photos/google.png")
+resize_image = googleimg.resize((100,100))
+googleimg = ImageTk.PhotoImage(resize_image)
+
+infoimg= Image.open("Photos/information.png")
+resize_image = infoimg.resize((100,100))
+infoimg = ImageTk.PhotoImage(resize_image)
+
 guiimg = Image.open("Photos/gui.jpg")
 resize_image = guiimg.resize((1920,1024))
 guiimg = ImageTk.PhotoImage(resize_image)
@@ -117,6 +142,10 @@ guiimg = ImageTk.PhotoImage(resize_image)
 playlistimg = Image.open("Photos/playlist.png")
 resize_image = playlistimg.resize((200,200))
 playlistimg = ImageTk.PhotoImage(resize_image)
+
+musicimg = Image.open("Photos/music.png")
+resize_image = musicimg.resize((100,100))
+musicimg = ImageTk.PhotoImage(resize_image)
 
 profileimg = Image.open("Photos/profile_icon.png")
 resize_image = profileimg.resize((100,100))
@@ -130,8 +159,6 @@ paintimg = Image.open("Photos/paint.png")
 resize_image = paintimg.resize((200,200))
 paintimg = ImageTk.PhotoImage(resize_image)
 
-
-
 frame = Frame(master=root,width=1680,height=1440)
 frame.pack()
 
@@ -139,40 +166,73 @@ guilabel = Label(master= frame, image = guiimg)
 guilabel.pack()
 
 def drawerscreen():
-    gesturebtn = Button(master=frame,text="Enable Gestures",image = gestures, command=gesturesx)
-    gesturebtn.place(x=40,y=800)
-    downloadbtn = Button(master=frame,text="Download",image = downloads, command=downloadvideo)
-    downloadbtn.place(x=240,y=800)
-    whatsappbtn = Button(master=frame,text="Whatsapp",image = whatsapp, command=whatsappWindow)
-    whatsappbtn.place(x=440,y=800)
     profilebtn = Label(master=frame,text="Profile",image =profileimg)
     profilebtn.place(x=240,y=100)
+    profiletxt=Label(master=frame,text="Profile",justify='center',font=("Helvetica"))
+    profiletxt.place(x=240,y=200,width=104)
+    
+    musicbtn = Button(master=frame,text="Play Music",image = musicimg, command=musicfileopen)
+    musicbtn.place(x=240,y=500)
+    musictxt=Label(master=frame,text="Play Music",justify='center',font=("Helvetica"))
+    musictxt.place(x=240,y=600,width=104)
+    
+    googlebtn = Button(master=frame,text="Google",image = googleimg, command=googlefun)
+    googlebtn.place(x=60,y=300)
+    googletxt=Label(master=frame,text="Google",justify='center',font=("Helvetica"))
+    googletxt.place(x=60,y=400,width=105)
+    
+    infobtn = Button(master=frame,text="Information",image = infoimg, command=infofun)
+    infobtn.place(x=420,y=300)
+    infotxt=Label(master=frame,text="Information",justify='center',font=("Helvetica"))
+    infotxt.place(x=420,y=400,width=105)
+    
+    gesturebtn = Button(master=frame,text="Enable Gestures",image = gestures, command=gesturesx)
+    gesturebtn.place(x=40,y=800)
+    gesturetxt=Label(master=frame,text="Gestures",justify='center',font=("Helvetica"))
+    gesturetxt.place(x=40,y=900,width=105)
+    
+    downloadbtn = Button(master=frame,text="Download",image = downloads, command=downloadvideo)
+    downloadbtn.place(x=240,y=800)
+    downloadtxt=Label(master=frame,text="Download",justify='center',font=("Helvetica"))
+    downloadtxt.place(x=240,y=900,width=105)
+
+    whatsappbtn = Button(master=frame,text="Whatsapp",image = whatsapp, command=whatsappWindow)
+    whatsappbtn.place(x=440,y=800)
+    whatsapptxt=Label(master=frame,text="Whatsapp",justify='center',font=("Helvetica"))
+    whatsapptxt.place(x=440,y=900,width=105)
 
 
 #homescreen
+
 query = Entry(master=frame, background="#ffffff", font=("Helvetica", 32))
 query.place(x=800,y=250,width=790,height=75)
+querytext=Label(master=frame,text="Search Bar",justify='center',font=("Helvetica"))
+querytext.place(x=801,y=325,width=790)
 
 searchbtn = Button(master=frame,text="Search",image = search, command=playvideox)
 searchbtn.place(x=1610,y=250)
+searchtext=Label(master=frame,text="Search",justify='center',font=("Helvetica"))
+searchtext.place(x=1610,y=320,width=75)
 
 audiobtn = Button(master=frame,text="Audio",image = mic, command=sttx)
 audiobtn.place(x=1700,y=250)
+audiotxt=Label(master=frame,text="Audio",justify='center',font=("Helvetica"))
+audiotxt.place(x=1700,y=320,width=75)
 
 playlistbtn = Button(master=frame,text="Playlist",image = playlistimg, command=ask_directory)
 playlistbtn.place(x=800,y=450)
 playlisttext=Label(master=frame,text="Create Playlist",justify='center',font=("Helvetica"))
-playlisttext.place(x=800,y=660,width=205)
+playlisttext.place(x=800,y=650,width=205)
 
 bookbtn = Button(master=frame,text="E-Book",image = bookimg, command=ebookreader)
 bookbtn.place(x=1200,y=450)
 booktext=Label(master=frame,text="Select E-Book",justify='center',font=("Helvetica"))
-booktext.place(x=1200,y=660,width=205)
+booktext.place(x=1200,y=650,width=205)
 
 paintbtn = Button(master=frame,text="Paint",image = paintimg, command=voicedraw)
 paintbtn.place(x=1600,y=450)
 painttext=Label(master=frame,text="Voice Draw",justify='center',font=("Helvetica"))
-painttext.place(x=1600,y=660,width=205)
+painttext.place(x=1600,y=650,width=205)
 
 drawerscreen()
 tts("Welcome To Tinfly")

@@ -85,8 +85,14 @@ def drawstar():
     
 
 def drawtext(drawquery):
+    turtle.penup()
+    turtle.setposition(-400,300)
     drawquery="Shape Not Found \n"+drawquery
     turtle.write(drawquery, font=("Arial", 16, "normal"))
     turtle.exitonclick()
 
-# drawtext("Mihir")
+def tdraw(query):
+    turtle.penup()
+    turtle.setposition(-400,300)
+    turtle.write(query, font=("Arial", 16, "normal"))
+    turtle.exitonclick()
