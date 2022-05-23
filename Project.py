@@ -22,6 +22,8 @@ root=Tk() #main container object
 root.title("TinFly")
 root.state("zoomed")
 
+volume=0.5
+
 # functions
 def sttx():
     tts("Speak Video or Music Title")
@@ -82,13 +84,13 @@ def musicPlayerWindow():
             self.my_list_song = None
             self.mute_scale = None
             self.loop_bar = None
-            self.shuffle_bar = None
+            self.loop_bar = None
 
             # Some integer variable initialization
-            self.shuffle_change = IntVar()
+            self.loop_change = IntVar()
             self.repeat_change = IntVar()
             self.mute_change = IntVar()
-            self.shuffle_counter = IntVar()
+            self.loop_counter = IntVar()
             self.repeat_counter = IntVar()
 
             # Btn img initialization
@@ -102,9 +104,9 @@ def musicPlayerWindow():
             self.song_duration_bar = 0
             self.song_length = 0
             self.repeat_counter = 1
-            self.shuffle_counter = 0
+            self.loop_counter = 0
             self.total_song = 0
-            self.shuffle_status = 1
+            self.loop_status = 1
             self.repeat_status = 1
             self.mute_status = 1
 
@@ -118,7 +120,7 @@ def musicPlayerWindow():
             self.song_duration()
             self.muter()
             self.repeat_controller()
-            self.shuffle_controller()
+            self.loop_controller()
             MusicPlay.bind('<Delete>', self.clear)
 
             add_multiple_song = playlist
@@ -220,7 +222,7 @@ def musicPlayerWindow():
             except:
                 print("Error in song duration")        
                 self.next_song()
-
+             
         def pause_song(self,e=None):
             pygame.mixer.music.pause()
             self.pause_btn.config(command=self.play_after_pause)
@@ -247,7 +249,7 @@ def musicPlayerWindow():
                     self.my_list_song.activate(current_song)
                     self.play_song()
 
-                elif self.shuffle_counter == 0:
+                elif self.loop_counter == 0:
                     self.stop_song()
 
                 else:
@@ -269,7 +271,7 @@ def musicPlayerWindow():
                     self.my_list_song.selection_set(song)
                     self.play_song()
 
-                elif self.shuffle_counter ==0:
+                elif self.loop_counter ==0:
                     self.stop_song()
 
                 else:
@@ -315,22 +317,22 @@ def musicPlayerWindow():
 
             self.mpWindow.update()
 
-        def shuffle_controller(self):# Shuffle set-up
-            self.shuffle_bar = Scale(self.mpWindow,from_=1,to=0,orient=HORIZONTAL,bg="#9f9fff",command=self.shuffle_maintain, activebackground="red",font=("Arial",15,"bold"),length=170,relief=RIDGE,bd=3)
-            self.shuffle_bar.place(x=405,y=647)
+        def loop_controller(self):# loop set-up
+            self.loop_bar = Scale(self.mpWindow,from_=1,to=0,orient=HORIZONTAL,bg="#9f9fff",command=self.loop_maintain, activebackground="red",font=("Arial",15,"bold"),length=170,relief=RIDGE,bd=3)
+            self.loop_bar.place(x=405,y=647)
 
-            self.shuffle_bar.set(self.shuffle_status)
+            self.loop_bar.set(self.loop_status)
 
-            shuffle_bar_indicator = Label(self.mpWindow,text="  Off    Shuffle    On",font=("Arial",10,"bold"),fg="blue",bg="#9f9fff")
-            shuffle_bar_indicator.place(x=415,y=652)
+            loop_bar_indicator = Label(self.mpWindow,text="  Off      Loop      On",font=("Arial",10,"bold"),fg="blue",bg="#9f9fff")
+            loop_bar_indicator.place(x=415,y=652)
 
-        def shuffle_maintain(self, indicator):# Shuffle functionality
+        def loop_maintain(self, indicator):# loop functionality
             if int(indicator) ==1:
-                self.shuffle_counter = 0
-                self.shuffle_change.set(0)
+                self.loop_counter = 0
+                self.loop_change.set(0)
             else:
-                self.shuffle_counter = 1
-                self.shuffle_change.set(1)    
+                self.loop_counter = 1
+                self.loop_change.set(1)    
 
         def clear(self, e=None):# Clear the song list
             try:
@@ -338,6 +340,21 @@ def musicPlayerWindow():
                 self.my_list_song.delete(0, END)
             except:
                 messagebox.showerror("Nothing Present", "Song list is empty")
+    
+    #functions
+    def volumeup():
+        global volume
+        volume=volume+0.1
+        pygame.mixer.music.set_volume(volume)
+        print("Volume Up")
+        # currenttime = oldsongtime+change+addedtime
+
+    def volumedown():
+        global volume
+        volume=volume-0.1
+        pygame.mixer.music.set_volume(volume)
+        print("Volume Down")
+        # pygame.mixer.music.set_pos(pygame.mixer.music.get_pos()-5000)
     
     #images
     bgimg = Image.open("Photos/bg.jpg")
@@ -352,6 +369,7 @@ def musicPlayerWindow():
     resize_image = delsongimg.resize((100,100))
     delsongimg = ImageTk.PhotoImage(resize_image)
     
+    #gui
     MusicPlay = Toplevel(root)
     MusicPlay.title("Generation Music player")
     MusicPlay.state("zoomed")
@@ -362,26 +380,36 @@ def musicPlayerWindow():
     musicbg = Label(master= mpWindow, image = bgimg)
     musicbg.pack()
 
+    #550 x
+    volumedown = ImageTk.PhotoImage(Image.open('Pictures/volumedown.png').resize((100,100)))
+    volumedownimg = Button(mpWindow, image=volumedown, bg="#323232", activebackground="#323232", relief=RAISED, bd=3,command=volumedown)
+    volumedownimg.place(x=370,y=850)
+
     backward_image_take = ImageTk.PhotoImage(Image.open('Pictures/backward.png').resize((100,100)))
     backward_btn_img = Button(mpWindow, image=backward_image_take, bg="#323232", activebackground="#323232", relief=RAISED, bd=3)
-    backward_btn_img.place(x=25,y=850)
-
+    backward_btn_img.place(x=550,y=850)
+    
     play_image_take = ImageTk.PhotoImage(Image.open('Pictures/play.png').resize((100,100)))
     play_btn_img = Button(mpWindow,image=play_image_take,bg="#323232", activebackground="#323232", relief=RAISED,bd=3)
-    play_btn_img.place(x=115,y=850)
+    play_btn_img.place(x=730,y=850)
 
     pause_image_take = ImageTk.PhotoImage(Image.open('Pictures/pause.png').resize((100,100)))
     pause_btn_img = Button(mpWindow,image=pause_image_take,bg="#323232", activebackground="#323232",relief=RAISED,bd=3)
-    pause_btn_img.place(x=210,y=850)
+    pause_btn_img.place(x=910,y=850)
 
     stop_image_take = ImageTk.PhotoImage(Image.open('Pictures/stop_img_is.png').resize((100,100)))
     stop_btn_img = Button(mpWindow,image=stop_image_take,bg="#323232", activebackground="#323232", relief=RAISED,bd=3)
-    stop_btn_img.place(x=305,y=850)
+    stop_btn_img.place(x=1090,y=850)
 
+    #1270 x 
     forward_image_take = ImageTk.PhotoImage(Image.open('Pictures/forward.png').resize((100,100)))
     forward_btn_img = Button(mpWindow,image=forward_image_take,bg="#323232", activebackground="#323232", relief=RAISED,bd=3)
-    forward_btn_img.place(x=400,y=850)
+    forward_btn_img.place(x=1270,y=850)
 
+    volumeup = ImageTk.PhotoImage(Image.open('Pictures/volumeup.png').resize((100,100)))
+    volumeupimg = Button(mpWindow,image=volumeup,bg="#323232", activebackground="#323232", relief=RAISED,bd=3,command=volumeup)
+    volumeupimg.place(x=1450,y=850)
+    
     MusicPlayer(mpWindow,backward_btn_img,play_btn_img,pause_btn_img,stop_btn_img,forward_btn_img)
 
     mpWindow.mainloop()
