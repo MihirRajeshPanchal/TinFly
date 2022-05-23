@@ -1,17 +1,22 @@
-from doctest import master
+from matplotlib import image
 import pywhatkit as pwt
+import time,pygame
+from os import listdir
+from Convertor import *
+from os.path import isfile, join
+from tkinter import filedialog,messagebox,colorchooser
 from tkinter import *
 from PIL import ImageTk, Image
-from PlaySingleMusic import musicfileopen
+from PlaySingleMusic import *
 from TTS import *
 from STT import *
 from Clicker import *
 from HandDetection import *
-from Playlist import *
 from AudioBook import *
 from VoiceDraw import *
 from VideoDownloader import *
 from Whatsapp import *
+from mutagen.mp3 import MP3
 
 root=Tk() #main container object
 root.title("TinFly")
@@ -56,14 +61,339 @@ def infofun():
         str="No Information about "+text
         tts(str)
 
+def musicPlayerWindow():
+    playlistdirname = filedialog.askdirectory()
+    playlistfiles = [f for f in listdir(playlistdirname) if isfile(join(playlistdirname, f))]
+    playlist=[playlistdirname+'/'+i for i in playlistfiles if i.endswith('.mp4'or'.wav')]
+    names=[i[:-4] for i in playlist]
+    for i in names:
+        print(i)
+    j=0
+    for i in playlist:
+        convertor(i,names[j]+'.mp3')
+        j+=1
+    for i in playlist:
+        os.remove(i)
+    playlist=[playlistdirname+'/'+i for i in playlistfiles if i.endswith('.mp3'or'.wav')]
+    class MusicPlayer:
+        def __init__(self, root, backward_img, play_img, pause_img, stop_image_btn, forward_img):
+            self.mpWindow = root
+            # Some variables initialize with None 
+            self.my_list_song = None
+            self.mute_scale = None
+            self.loop_bar = None
+            self.shuffle_bar = None
+
+            # Some integer variable initialization
+            self.shuffle_change = IntVar()
+            self.repeat_change = IntVar()
+            self.mute_change = IntVar()
+            self.shuffle_counter = IntVar()
+            self.repeat_counter = IntVar()
+
+            # Btn img initialization
+            self.forward_btn = forward_img
+            self.backward_btn = backward_img
+            self.pause_btn = pause_img
+            self.play_btn = play_img
+            self.stop_btn = stop_image_btn
+
+            # Value initialization
+            self.song_duration_bar = 0
+            self.song_length = 0
+            self.repeat_counter = 1
+            self.shuffle_counter = 0
+            self.total_song = 0
+            self.shuffle_status = 1
+            self.repeat_status = 1
+            self.mute_status = 1
+
+            # pygame initialization
+            pygame.mixer.init()
+
+            # Default function calling
+            self.basic_setup()
+            self.instructional_btn_setup()
+            self.image_button_function_set()
+            self.song_duration()
+            self.muter()
+            self.repeat_controller()
+            self.shuffle_controller()
+            MusicPlay.bind('<Delete>', self.clear)
+
+            add_multiple_song = playlist
+            for song in add_multiple_song:
+                self.my_list_song.insert(END, song)
+                time.sleep(0.5)
+                mpWindow.update()
+                
+        def basic_setup(self):
+            # Heading
+            Label(self.mpWindow,text="TinFly Music Player",justify=CENTER, font=("Arial",20,"bold"),bg="#a449b3",fg="gold").place(x=820,y=25)
+
+            # Song Collection
+            frame = Frame(self.mpWindow)
+            frame.place(x=25,y=80)
+
+            v_scroll = Scrollbar(frame)
+            v_scroll.pack(side=RIGHT, fill=Y)
+
+            self.my_list_song = Listbox(frame, bg="#404040", fg="#ffbf50", width=260, height=25, font=("Arial",8,"bold"), relief=SUNKEN, borderwidth=20, yscrollcommand=v_scroll.set)
+            self.my_list_song.pack(side=LEFT, anchor=NW)
+
+            v_scroll.configure(command=self.my_list_song.yview)
+
+        def instructional_btn_setup(self): # Some button initialization
+            song_add = Button(self.mpWindow,text="Add Song",relief=RAISED,image=addsongimg, borderwidth=5, command=self.add_song)
+            song_add.place(x=1080,y=652)
+
+            delete_song = Button(self.mpWindow, text="Delete Selected Song", relief=RAISED, image=delsongimg,borderwidth=5,command=self.delete_selected_song)
+            delete_song.place(x=1380, y=652)
+
+            song_counter = Button(self.mpWindow, text="Song Counter", width=13,font=("Helvetica", 15, "bold", "italic"), activebackground="#262626", activeforeground="#ff1414", bg="#262626", fg="#ff1414", relief=RAISED, borderwidth=5, command=self.song_counter)
+            song_counter.place(x=1650, y=652)
+
+        def image_button_function_set(self):# Instructional buttons
+            self.play_btn.config(command=lambda: self.play_song('<Return>'))
+            MusicPlay.bind('<Return>',self.play_song)
+            MusicPlay.bind('<Double-Button-1>', self.play_song)
+
+            self.pause_btn.config(command=lambda: self.pause_song('<space>'))
+            MusicPlay.bind('<space>',self.pause_song)
+
+            self.stop_btn.config(command=lambda: self.stop_song('<0>'))
+            MusicPlay.bind('<Escape>', self.stop_song)
+
+            self.forward_btn.config(command=lambda: self.next_song('<Right>'))
+            MusicPlay.bind('<Right>', self.next_song)
+
+            self.backward_btn.config(command=lambda: self.previous_song('<Left>'))
+            MusicPlay.bind('<Left>', self.previous_song)
+
+        def add_song(self):# Adding songs
+            add_multiple_song = filedialog.askopenfilenames(title="Select one or multiple song",filetypes=(("MP3 files", "*mp3"), ("WAV files","*.wav")))
+            for song in add_multiple_song:
+                self.my_list_song.insert(END, song)
+                time.sleep(0.5)
+                self.mpwindow.update()
+
+        def delete_selected_song(self):# Delete a particular song
+            self.stop_song()
+            self.my_list_song.delete(ACTIVE)
+
+        def song_counter(self):# Total song present in the list
+            messagebox.showinfo("Song Counter", "Total song in the list: " + str(self.my_list_song.size()))
+
+        def song_duration(self):# Make Song_Duration Label
+            self.song_duration_bar = Label(self.mpWindow, text="Song Duration", font=("Arial",17,"bold"), fg="white", bg="#141414",width=25)
+            self.song_duration_bar.place(x=780, y=550)    
+
+        def play_song(self,e=None):# Play a song
+            try:
+                # Song Load and Play
+                take_selected_song = self.my_list_song.get(ACTIVE)
+                pygame.mixer.music.load(take_selected_song)
+                pygame.mixer.music.play(loops=self.repeat_counter)
+
+                # Song length find
+                song_type = MP3(take_selected_song)
+                self.song_length = time.strftime("%H:%M:%S", time.gmtime(song_type.info.length))
+                
+                # Song Duration Label Position Set and Song Duration Function call
+                self.song_duration_bar.place(x=780,y=550)
+                self.song_duration_time()
+            except:
+                print("\nError in play song")
+                self.next_song()
+
+        def song_duration_time(self):# Song duration time controller
+            try:
+                raw_time = pygame.mixer.music.get_pos()/1000
+                converted_time = time.strftime("%H:%M:%S",time.gmtime(raw_time))
+                if self.song_length == converted_time  and self.repeat_counter == 1:
+                    self.next_song()
+                elif self.song_length == converted_time and self.repeat_counter == -1:
+                    self.play_song()
+                else: 
+                    self.song_duration_bar.config(text="Time is: "+str(converted_time)+" of "+str(self.song_length))
+                    self.song_duration_bar.after(1000,self.song_duration_time)# Recursive function call after 1 sec = 1000ms
+            except:
+                print("Error in song duration")        
+                self.next_song()
+
+        def pause_song(self,e=None):
+            pygame.mixer.music.pause()
+            self.pause_btn.config(command=self.play_after_pause)
+            MusicPlay.bind('<space>', self.play_after_pause)
+
+        def play_after_pause(self,e=None):# Play the song after pause
+            pygame.mixer.music.unpause()
+            self.pause_btn.config(command=self.pause_song)
+            MusicPlay.bind('<space>', self.pause_song)
+
+        def stop_song(self,e=None):# Stop playing song
+            pygame.mixer.music.stop()
+            self.song_duration_bar.destroy()
+            self.song_duration()
+
+        def next_song(self,e=None):# Next song control
+            try:
+                current_song = self.my_list_song.curselection()
+                self.my_list_song.selection_clear(ACTIVE)
+                current_song = current_song[0]+1
+
+                if current_song < self.my_list_song.size():
+                    self.my_list_song.selection_set(current_song)
+                    self.my_list_song.activate(current_song)
+                    self.play_song()
+
+                elif self.shuffle_counter == 0:
+                    self.stop_song()
+
+                else:
+                    self.my_list_song.selection_set(0)
+                    self.my_list_song.activate(0)
+                    self.play_song()
+            except:
+                print("Error in next song")
+                pass
+
+        def previous_song(self,e=None):# Previous song control
+            try:
+                song = self.my_list_song.curselection()
+                self.my_list_song.selection_clear(ACTIVE)
+                song = song[0]-1
+
+                if song>-1:
+                    self.my_list_song.activate(song)
+                    self.my_list_song.selection_set(song)
+                    self.play_song()
+
+                elif self.shuffle_counter ==0:
+                    self.stop_song()
+
+                else:
+                    self.my_list_song.selection_set(0)
+                    self.my_list_song.activate(0)
+                    self.play_song()
+            except:
+                print("\nError in previous song")
+                pass
+
+        def muter(self):# Mute set-up
+            self.mute_scale = Scale(self.mpWindow,from_=1,to=0,orient=HORIZONTAL,bg="#9f9fff",command=self.get_mute, activebackground="red",font=("Arial",15,"bold"),length=47,relief=RIDGE,bd=3)
+            self.mute_scale.place(x=25,y=647)
+
+            self.mute_scale.set(self.mute_status)
+
+            mute_indicator = Label(self.mpWindow,text="Mute",font=("Arial",10,"bold"),fg="blue",bg="#9f9fff")
+            mute_indicator.place(x=35,y=652)
+
+        def get_mute(self,indicator):# Mute functionality
+            pygame.mixer.music.set_volume(int(indicator))
+            if int(indicator)==1:
+                self.mute_change.set(0)
+            else:
+                self.mute_change.set(1)
+
+        def repeat_controller(self):# Repeat Set-up
+            self.loop_bar = Scale(self.mpWindow,from_=1,to=0,orient=HORIZONTAL,bg="#9f9fff",command=self.repeat_maintain, activebackground="red",font=("Arial",15,"bold"),length=170,relief=RIDGE,bd=3)
+            self.loop_bar.place(x=135,y=647)
+
+            self.loop_bar.set(self.repeat_status)
+
+            loop_bar_indicator = Label(self.mpWindow,text="Off    Repeat    On",font=("Arial",10,"bold"),fg="blue",bg="#9f9fff")
+            loop_bar_indicator.place(x=150,y=652)
+
+        def repeat_maintain(self, indicator):# Repeat functionality
+            if int(indicator) == 1:
+                self.repeat_counter = 1
+                self.repeat_change.set(0)
+            else:
+                self.repeat_counter = -1
+                self.repeat_change.set(1)
+
+            self.mpWindow.update()
+
+        def shuffle_controller(self):# Shuffle set-up
+            self.shuffle_bar = Scale(self.mpWindow,from_=1,to=0,orient=HORIZONTAL,bg="#9f9fff",command=self.shuffle_maintain, activebackground="red",font=("Arial",15,"bold"),length=170,relief=RIDGE,bd=3)
+            self.shuffle_bar.place(x=405,y=647)
+
+            self.shuffle_bar.set(self.shuffle_status)
+
+            shuffle_bar_indicator = Label(self.mpWindow,text="  Off    Shuffle    On",font=("Arial",10,"bold"),fg="blue",bg="#9f9fff")
+            shuffle_bar_indicator.place(x=415,y=652)
+
+        def shuffle_maintain(self, indicator):# Shuffle functionality
+            if int(indicator) ==1:
+                self.shuffle_counter = 0
+                self.shuffle_change.set(0)
+            else:
+                self.shuffle_counter = 1
+                self.shuffle_change.set(1)    
+
+        def clear(self, e=None):# Clear the song list
+            try:
+                self.stop_song()
+                self.my_list_song.delete(0, END)
+            except:
+                messagebox.showerror("Nothing Present", "Song list is empty")
+    
+    #images
+    bgimg = Image.open("Photos/bg.jpg")
+    resize_image = bgimg.resize((1920,1024))
+    bgimg = ImageTk.PhotoImage(resize_image)
+    
+    addsongimg = Image.open("Pictures/addsong.png")
+    resize_image = addsongimg.resize((100,100))
+    addsongimg = ImageTk.PhotoImage(resize_image)
+    
+    delsongimg = Image.open("Pictures/deletesong.png")
+    resize_image = delsongimg.resize((100,100))
+    delsongimg = ImageTk.PhotoImage(resize_image)
+    
+    MusicPlay = Toplevel(root)
+    MusicPlay.title("Generation Music player")
+    MusicPlay.state("zoomed")
+    
+    mpWindow = Frame(master=MusicPlay,width=1920,height=1080)
+    mpWindow.pack()    
+    
+    musicbg = Label(master= mpWindow, image = bgimg)
+    musicbg.pack()
+
+    backward_image_take = ImageTk.PhotoImage(Image.open('Pictures/backward.png').resize((100,100)))
+    backward_btn_img = Button(mpWindow, image=backward_image_take, bg="#323232", activebackground="#323232", relief=RAISED, bd=3)
+    backward_btn_img.place(x=25,y=850)
+
+    play_image_take = ImageTk.PhotoImage(Image.open('Pictures/play.png').resize((100,100)))
+    play_btn_img = Button(mpWindow,image=play_image_take,bg="#323232", activebackground="#323232", relief=RAISED,bd=3)
+    play_btn_img.place(x=115,y=850)
+
+    pause_image_take = ImageTk.PhotoImage(Image.open('Pictures/pause.png').resize((100,100)))
+    pause_btn_img = Button(mpWindow,image=pause_image_take,bg="#323232", activebackground="#323232",relief=RAISED,bd=3)
+    pause_btn_img.place(x=210,y=850)
+
+    stop_image_take = ImageTk.PhotoImage(Image.open('Pictures/stop_img_is.png').resize((100,100)))
+    stop_btn_img = Button(mpWindow,image=stop_image_take,bg="#323232", activebackground="#323232", relief=RAISED,bd=3)
+    stop_btn_img.place(x=305,y=850)
+
+    forward_image_take = ImageTk.PhotoImage(Image.open('Pictures/forward.png').resize((100,100)))
+    forward_btn_img = Button(mpWindow,image=forward_image_take,bg="#323232", activebackground="#323232", relief=RAISED,bd=3)
+    forward_btn_img.place(x=400,y=850)
+
+    MusicPlayer(mpWindow,backward_btn_img,play_btn_img,pause_btn_img,stop_btn_img,forward_btn_img)
+
+    mpWindow.mainloop()
+
 def whatsappWindow():
     
     def whatsappsend():
         phno=phnoentry.get()
-        msg=msgentry.get()
+        msg=msgentry.get("1.0", "end-1c")
         whatsappchecksend(phno,msg)
         
-    wWindow=Toplevel(master)
+    wWindow=Toplevel(root)
     wWindow.title("Whatsapp")
     wWindow.state("zoomed")
     
@@ -98,7 +428,7 @@ def whatsappWindow():
     msgtext=Label(master=whatsappframe,text="Enter Message",justify='center',font=("Helvetica"))
     msgtext.place(x=400,y=475,width=205)
     
-    msgentry = Entry(master=whatsappframe, background="#ffffff", font=("Helvetica", 32))
+    msgentry = Text(master=whatsappframe, background="#ffffff", font=("Helvetica", 32))
     msgentry.place(x=800,y=450,width=790,height=200)
     
     sendbtn = Button(master=whatsappframe,text="send",image = sendimg, command=whatsappsend)
@@ -219,7 +549,7 @@ audiobtn.place(x=1700,y=250)
 audiotxt=Label(master=frame,text="Audio",justify='center',font=("Helvetica"))
 audiotxt.place(x=1700,y=320,width=75)
 
-playlistbtn = Button(master=frame,text="Playlist",image = playlistimg, command=ask_directory)
+playlistbtn = Button(master=frame,text="Playlist",image = playlistimg, command=musicPlayerWindow)
 playlistbtn.place(x=800,y=450)
 playlisttext=Label(master=frame,text="Create Playlist",justify='center',font=("Helvetica"))
 playlisttext.place(x=800,y=650,width=205)

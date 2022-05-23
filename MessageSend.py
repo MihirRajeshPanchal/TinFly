@@ -9,7 +9,7 @@ min=now.strftime("%M")
 
 def whatsappmsg(phno,msgstr):
     try:        
-        pywhatkit.sendwhatmsg(phno,msgstr,int(hrs),int(min)+1,tab_close=True)
+        pywhatkit.sendwhatmsg(phno,msgstr,int(hrs),int(min)+2,tab_close=True)
         clicker("enter")
         tts("Message Delivered")
     except:
