@@ -148,11 +148,15 @@ def musicPlayerWindow():
         def instructional_btn_setup(self): # Some button initialization
             song_add = Button(self.mpWindow,text="Add Song",relief=RAISED,image=addsongimg, borderwidth=5, command=self.add_song)
             song_add.place(x=1080,y=652)
+            songaddtxt=Label(self.mpWindow,text="Add Song",justify='center',font=("Helvetica"))
+            songaddtxt.place(x=1080,y=762,width=107) 
 
             delete_song = Button(self.mpWindow, text="Delete Selected Song", relief=RAISED, image=delsongimg,borderwidth=5,command=self.delete_selected_song)
             delete_song.place(x=1380, y=652)
+            deletesongtxt=Label(self.mpWindow,text="Delete Song",justify='center',font=("Helvetica"))
+            deletesongtxt.place(x=1380,y=762,width=107) 
 
-            song_counter = Button(self.mpWindow, text="Song Counter", width=13,font=("Helvetica", 15, "bold", "italic"), activebackground="#262626", activeforeground="#ff1414", bg="#262626", fg="#ff1414", relief=RAISED, borderwidth=5, command=self.song_counter)
+            song_counter = Button(self.mpWindow, text="Song Counter", width=13,font=("Helvetica", 15, "bold", "italic"), activebackground="#262626", activeforeground="gold",bg="#a449b3",fg="gold", relief=RAISED, borderwidth=5, command=self.song_counter)
             song_counter.place(x=1650, y=652)
 
         def image_button_function_set(self):# Instructional buttons
@@ -342,14 +346,14 @@ def musicPlayerWindow():
                 messagebox.showerror("Nothing Present", "Song list is empty")
     
     #functions
-    def volumeup():
+    def volumeupfun():
         global volume
         volume=volume+0.1
         pygame.mixer.music.set_volume(volume)
         print("Volume Up")
         # currenttime = oldsongtime+change+addedtime
 
-    def volumedown():
+    def volumedownfun():
         global volume
         volume=volume-0.1
         pygame.mixer.music.set_volume(volume)
@@ -371,7 +375,7 @@ def musicPlayerWindow():
     
     #gui
     MusicPlay = Toplevel(root)
-    MusicPlay.title("Generation Music player")
+    MusicPlay.title("TinFly")
     MusicPlay.state("zoomed")
     
     mpWindow = Frame(master=MusicPlay,width=1920,height=1080)
@@ -382,33 +386,47 @@ def musicPlayerWindow():
 
     #550 x
     volumedown = ImageTk.PhotoImage(Image.open('Pictures/volumedown.png').resize((100,100)))
-    volumedownimg = Button(mpWindow, image=volumedown, bg="#323232", activebackground="#323232", relief=RAISED, bd=3,command=volumedown)
-    volumedownimg.place(x=370,y=850)
+    volumedownimg = Button(mpWindow, image=volumedown, bg="#323232", activebackground="#323232", relief=RAISED, bd=3,command=volumedownfun)
+    volumedownimg.place(x=370,y=825)
+    volumedowntxt=Label(master=mpWindow,text="Volume Down",justify='center',font=("Helvetica"))
+    volumedowntxt.place(x=370,y=930,width=107)
 
     backward_image_take = ImageTk.PhotoImage(Image.open('Pictures/backward.png').resize((100,100)))
     backward_btn_img = Button(mpWindow, image=backward_image_take, bg="#323232", activebackground="#323232", relief=RAISED, bd=3)
-    backward_btn_img.place(x=550,y=850)
+    backward_btn_img.place(x=550,y=825)
+    backward_btntxt=Label(master=mpWindow,text="Previous Song",justify='center',font=("Helvetica"))
+    backward_btntxt.place(x=550,y=930,width=107)
     
     play_image_take = ImageTk.PhotoImage(Image.open('Pictures/play.png').resize((100,100)))
     play_btn_img = Button(mpWindow,image=play_image_take,bg="#323232", activebackground="#323232", relief=RAISED,bd=3)
-    play_btn_img.place(x=730,y=850)
+    play_btn_img.place(x=730,y=825)
+    playbtntxt=Label(master=mpWindow,text="Restart",justify='center',font=("Helvetica"))
+    playbtntxt.place(x=730,y=930,width=107)
 
     pause_image_take = ImageTk.PhotoImage(Image.open('Pictures/pause.png').resize((100,100)))
     pause_btn_img = Button(mpWindow,image=pause_image_take,bg="#323232", activebackground="#323232",relief=RAISED,bd=3)
-    pause_btn_img.place(x=910,y=850)
+    pause_btn_img.place(x=910,y=825)
+    pausebtntxt=Label(master=mpWindow,text="Pause/Play",justify='center',font=("Helvetica"))
+    pausebtntxt.place(x=910,y=930,width=107)
 
     stop_image_take = ImageTk.PhotoImage(Image.open('Pictures/stop_img_is.png').resize((100,100)))
     stop_btn_img = Button(mpWindow,image=stop_image_take,bg="#323232", activebackground="#323232", relief=RAISED,bd=3)
-    stop_btn_img.place(x=1090,y=850)
+    stop_btn_img.place(x=1090,y=825)
+    stopbtntxt=Label(master=mpWindow,text="Stop",justify='center',font=("Helvetica"))
+    stopbtntxt.place(x=1090,y=930,width=107)
 
     #1270 x 
     forward_image_take = ImageTk.PhotoImage(Image.open('Pictures/forward.png').resize((100,100)))
     forward_btn_img = Button(mpWindow,image=forward_image_take,bg="#323232", activebackground="#323232", relief=RAISED,bd=3)
-    forward_btn_img.place(x=1270,y=850)
+    forward_btn_img.place(x=1270,y=825)
+    forwardbtntxt=Label(master=mpWindow,text="Next Song",justify='center',font=("Helvetica"))
+    forwardbtntxt.place(x=1270,y=930,width=107)   
 
     volumeup = ImageTk.PhotoImage(Image.open('Pictures/volumeup.png').resize((100,100)))
-    volumeupimg = Button(mpWindow,image=volumeup,bg="#323232", activebackground="#323232", relief=RAISED,bd=3,command=volumeup)
-    volumeupimg.place(x=1450,y=850)
+    volumeupimg = Button(mpWindow,image=volumeup,bg="#323232", activebackground="#323232", relief=RAISED,bd=3,command=volumeupfun)
+    volumeupimg.place(x=1450,y=825)
+    volumeuptxt=Label(master=mpWindow,text="Volume Up",justify='center',font=("Helvetica"))
+    volumeuptxt.place(x=1450,y=930,width=107)  
     
     MusicPlayer(mpWindow,backward_btn_img,play_btn_img,pause_btn_img,stop_btn_img,forward_btn_img)
 
