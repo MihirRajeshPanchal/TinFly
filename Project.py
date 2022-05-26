@@ -1,10 +1,9 @@
-from matplotlib import image
 import pywhatkit as pwt
 import time,pygame
 from os import listdir
 from Convertor import *
 from os.path import isfile, join
-from tkinter import filedialog,messagebox,colorchooser
+from tkinter import filedialog,messagebox,colorchooser, ttk
 from tkinter import *
 from PIL import ImageTk, Image
 from PlaySingleMusic import *
@@ -205,6 +204,8 @@ def musicPlayerWindow():
                 song_type = MP3(take_selected_song)
                 self.song_length = time.strftime("%H:%M:%S", time.gmtime(song_type.info.length))
                 
+                slider_position=int(song_type.info.length)
+                slider.config(to=slider_position,value=0)
                 # Song Duration Label Position Set and Song Duration Function call
                 self.song_duration_bar.place(x=780,y=550)
                 self.song_duration_time()
@@ -222,6 +223,7 @@ def musicPlayerWindow():
                     self.play_song()
                 else: 
                     self.song_duration_bar.config(text="Time is: "+str(converted_time)+" of "+str(self.song_length))
+                    slider.config(value=raw_time)
                     self.song_duration_bar.after(1000,self.song_duration_time)# Recursive function call after 1 sec = 1000ms
             except:
                 print("Error in song duration")        
@@ -344,7 +346,7 @@ def musicPlayerWindow():
                 self.my_list_song.delete(0, END)
             except:
                 messagebox.showerror("Nothing Present", "Song list is empty")
-    
+            
     #functions
     def volumeupfun():
         global volume
@@ -427,6 +429,12 @@ def musicPlayerWindow():
     volumeupimg.place(x=1450,y=825)
     volumeuptxt=Label(master=mpWindow,text="Volume Up",justify='center',font=("Helvetica"))
     volumeuptxt.place(x=1450,y=930,width=107)  
+    
+    def slide(x):
+        pass
+    
+    slider=ttk.Scale(mpWindow,from_=0,to=100,orient=HORIZONTAL,value=0,command=slide,length=700)
+    slider.place(x=640,y=600)
     
     MusicPlayer(mpWindow,backward_btn_img,play_btn_img,pause_btn_img,stop_btn_img,forward_btn_img)
 
