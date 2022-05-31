@@ -127,7 +127,8 @@ def musicPlayerWindow():
                 self.my_list_song.insert(END, song)
                 time.sleep(0.5)
                 mpWindow.update()
-                
+            
+            self.my_list_song.select_set(0)
         def basic_setup(self):
             # Heading
             Label(self.mpWindow,text="TinFly Music Player",justify=CENTER, font=("Arial",20,"bold"),bg="#a449b3",fg="gold").place(x=820,y=25)
@@ -210,6 +211,7 @@ def musicPlayerWindow():
                 self.song_duration_bar.place(x=780,y=550)
                 self.song_duration_time()
             except:
+                tts("Error in play song")
                 print("\nError in play song")
                 self.next_song()
 
@@ -226,6 +228,7 @@ def musicPlayerWindow():
                     slider.config(value=raw_time)
                     self.song_duration_bar.after(1000,self.song_duration_time)# Recursive function call after 1 sec = 1000ms
             except:
+                tts("Error in song duration")
                 print("Error in song duration")        
                 self.next_song()
              
@@ -263,6 +266,7 @@ def musicPlayerWindow():
                     self.my_list_song.activate(0)
                     self.play_song()
             except:
+                tts("Error in next song")
                 print("Error in next song")
                 pass
 
@@ -285,6 +289,7 @@ def musicPlayerWindow():
                     self.my_list_song.activate(0)
                     self.play_song()
             except:
+                tts("Error in previous song")
                 print("\nError in previous song")
                 pass
 
@@ -345,6 +350,7 @@ def musicPlayerWindow():
                 self.stop_song()
                 self.my_list_song.delete(0, END)
             except:
+                tts("Nothing Present", "Song list is empty")
                 messagebox.showerror("Nothing Present", "Song list is empty")
             
     #functions

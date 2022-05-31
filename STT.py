@@ -36,7 +36,7 @@ def rstt():
             try:
             # using google speech recognition
                 text = r.recognize_google(audio)
-                print(text)
+                # print(text)
                 return text
             except:
                 tts('Couldnt Recognize your voice')
