@@ -194,6 +194,9 @@ def musicPlayerWindow():
             self.song_duration_bar = Label(self.mpWindow, text="Song Duration", font=("Arial",17,"bold"), fg="white", bg="#141414",width=25)
             self.song_duration_bar.place(x=780, y=550)    
 
+        global occurencesong
+        occurencesong=0
+        
         def play_song(self,e=None):# Play a song
             try:
                 # Song Load and Play
@@ -211,8 +214,12 @@ def musicPlayerWindow():
                 self.song_duration_bar.place(x=780,y=550)
                 slider_position=int(song_type.info.length)
                 slider.config(to=slider_position,value=0)
-                self.song_duration_time()
-            except:
+                global occurencesong
+                occurencesong+=1
+                if occurencesong==1:
+                    self.song_duration_time()
+            except Exception as e:
+                print(e)
                 tts("Error in play song")
                 print("\nError in play song")
                 self.next_song()
@@ -225,22 +232,30 @@ def musicPlayerWindow():
         def song_duration_time(self):# Song duration time controller
             try:
                 i=0
+                global occurencesong
                 raw_time=[]
                 musicpos = pygame.mixer.music.get_pos()/1000
                 raw_time.append(musicpos)
+                # print(raw_time)
                 converted_time = time.strftime("%H:%M:%S",time.gmtime(raw_time[i]))
-                print("Self Song",self.song_length)
-                print("converted Time",converted_time)
+                # print("I",i)
+                # print("Self Song",self.song_length)
+                # print("converted Time",converted_time)
                 if (self.song_length == converted_time  and self.repeat_counter == 1) or converted_time=="23:59:59":
                     i+=1
+                    occurencesong=0
                     self.next_song()
                 elif (self.song_length == converted_time and self.repeat_counter == -1) or converted_time=="23:59:59":
                     i+=1
+                    occurencesong=0
+                    # self.song_duration_bar.config(text="Time is: "+str(converted_time)+" of "+str(self.song_length))
+                    
                     self.play_song()
                 else: 
-                    raw_time[i]+=1
-                    if int(slider.get())==int(raw_time[i]):
+                    # raw_time[i]+=1
+                    if int(slider.get())==int(raw_time[i]+1):
                         #slider has not moved
+                        # i+=1
                         slider_position=int(song_type.info.length)
                         slider.config(to=slider_position,value=int(raw_time[i]))
                         self.song_duration_bar.config(text="Time is: "+str(converted_time)+" of "+str(self.song_length))
@@ -254,9 +269,11 @@ def musicPlayerWindow():
                         next_time=int(slider.get())+1
                         slider.config(value=next_time)
                     
-
+                    i+=1
                     self.song_duration_bar.after(1000,self.song_duration_time)# Recursive function call after 1 sec = 1000ms
             except Exception as e:
+                print(i)
+                print(raw_time)
                 print(e)
                 tts("Error in song duration")
                 print("Error in song duration")        
@@ -271,11 +288,17 @@ def musicPlayerWindow():
             pygame.mixer.music.unpause()
             self.pause_btn.config(command=self.pause_song)
             MusicPlay.bind('<space>', self.pause_song)
-
+        
+        global stopped
+        stopped=False
+        
         def stop_song(self,e=None):# Stop playing song
             pygame.mixer.music.stop()
             self.song_duration_bar.destroy()
             self.song_duration()
+            
+            global stopped
+            stopped=True
 
         def next_song(self,e=None):# Next song control
             try:
@@ -474,6 +497,7 @@ def musicPlayerWindow():
     volumeuptxt.place(x=1450,y=930,width=107)  
     
     def slide(x):
+        # Tinfly.pause_song()
         Tinfly.slideplaysong()
     
     slider=ttk.Scale(mpWindow,from_=0,to=100,orient=HORIZONTAL,value=0,command=slide,length=700)
