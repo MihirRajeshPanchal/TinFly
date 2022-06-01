@@ -352,7 +352,6 @@ def musicPlayerWindow():
             except:
                 tts("Nothing Present", "Song list is empty")
                 messagebox.showerror("Nothing Present", "Song list is empty")
-            
     #functions
     def volumeupfun():
         global volume
@@ -368,6 +367,10 @@ def musicPlayerWindow():
         print("Volume Down")
         # pygame.mixer.music.set_pos(pygame.mixer.music.get_pos()-5000)
     
+    def closewindow():
+        Tinfly.stop_song()
+        MusicPlay.destroy()
+        
     #images
     bgimg = Image.open("Photos/bg.jpg")
     resize_image = bgimg.resize((1920,1024))
@@ -442,9 +445,9 @@ def musicPlayerWindow():
     slider=ttk.Scale(mpWindow,from_=0,to=100,orient=HORIZONTAL,value=0,command=slide,length=700)
     slider.place(x=640,y=600)
     
-    MusicPlayer(mpWindow,backward_btn_img,play_btn_img,pause_btn_img,stop_btn_img,forward_btn_img)
-
-    mpWindow.mainloop()
+    Tinfly=MusicPlayer(mpWindow,backward_btn_img,play_btn_img,pause_btn_img,stop_btn_img,forward_btn_img)
+    MusicPlay.protocol("WM_DELETE_WINDOW", closewindow)
+    MusicPlay.mainloop()
 
 def whatsappWindow():
     
