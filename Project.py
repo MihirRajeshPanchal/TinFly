@@ -202,32 +202,62 @@ def musicPlayerWindow():
                 pygame.mixer.music.play(loops=self.repeat_counter)
 
                 # Song length find
+                global song_type
                 song_type = MP3(take_selected_song)
                 self.song_length = time.strftime("%H:%M:%S", time.gmtime(song_type.info.length))
                 
-                slider_position=int(song_type.info.length)
-                slider.config(to=slider_position,value=0)
+
                 # Song Duration Label Position Set and Song Duration Function call
                 self.song_duration_bar.place(x=780,y=550)
+                slider_position=int(song_type.info.length)
+                slider.config(to=slider_position,value=0)
                 self.song_duration_time()
             except:
                 tts("Error in play song")
                 print("\nError in play song")
                 self.next_song()
 
+        def slideplaysong(self):
+            take_selected_song = self.my_list_song.get(ACTIVE)
+            pygame.mixer.music.load(take_selected_song)
+            pygame.mixer.music.play(loops=self.repeat_counter,start=int(slider.get()))
+            
         def song_duration_time(self):# Song duration time controller
             try:
-                raw_time = pygame.mixer.music.get_pos()/1000
-                converted_time = time.strftime("%H:%M:%S",time.gmtime(raw_time))
-                if self.song_length == converted_time  and self.repeat_counter == 1:
+                i=0
+                raw_time=[]
+                musicpos = pygame.mixer.music.get_pos()/1000
+                raw_time.append(musicpos)
+                converted_time = time.strftime("%H:%M:%S",time.gmtime(raw_time[i]))
+                print("Self Song",self.song_length)
+                print("converted Time",converted_time)
+                if (self.song_length == converted_time  and self.repeat_counter == 1) or converted_time=="23:59:59":
+                    i+=1
                     self.next_song()
-                elif self.song_length == converted_time and self.repeat_counter == -1:
+                elif (self.song_length == converted_time and self.repeat_counter == -1) or converted_time=="23:59:59":
+                    i+=1
                     self.play_song()
                 else: 
-                    self.song_duration_bar.config(text="Time is: "+str(converted_time)+" of "+str(self.song_length))
-                    slider.config(value=raw_time)
+                    raw_time[i]+=1
+                    if int(slider.get())==int(raw_time[i]):
+                        #slider has not moved
+                        slider_position=int(song_type.info.length)
+                        slider.config(to=slider_position,value=int(raw_time[i]))
+                        self.song_duration_bar.config(text="Time is: "+str(converted_time)+" of "+str(self.song_length))
+                    else:
+                        #slider has been moved
+                        slider_position=int(song_type.info.length)
+                        slider.config(to=slider_position,value=int(slider.get()))
+                        converted_time = time.strftime("%H:%M:%S",time.gmtime(slider.get()))
+                        self.song_duration_bar.config(text="Time is: "+str(converted_time)+" of "+str(self.song_length))
+
+                        next_time=int(slider.get())+1
+                        slider.config(value=next_time)
+                    
+
                     self.song_duration_bar.after(1000,self.song_duration_time)# Recursive function call after 1 sec = 1000ms
-            except:
+            except Exception as e:
+                print(e)
                 tts("Error in song duration")
                 print("Error in song duration")        
                 self.next_song()
@@ -256,6 +286,8 @@ def musicPlayerWindow():
                 if current_song < self.my_list_song.size():
                     self.my_list_song.selection_set(current_song)
                     self.my_list_song.activate(current_song)
+                    slider_position=int(song_type.info.length)
+                    slider.config(to=slider_position,value=0)
                     self.play_song()
 
                 elif self.loop_counter == 0:
@@ -264,6 +296,8 @@ def musicPlayerWindow():
                 else:
                     self.my_list_song.selection_set(0)
                     self.my_list_song.activate(0)
+                    slider_position=int(song_type.info.length)
+                    slider.config(to=slider_position,value=0)
                     self.play_song()
             except:
                 tts("Error in next song")
@@ -440,7 +474,7 @@ def musicPlayerWindow():
     volumeuptxt.place(x=1450,y=930,width=107)  
     
     def slide(x):
-        pass
+        Tinfly.slideplaysong()
     
     slider=ttk.Scale(mpWindow,from_=0,to=100,orient=HORIZONTAL,value=0,command=slide,length=700)
     slider.place(x=640,y=600)
