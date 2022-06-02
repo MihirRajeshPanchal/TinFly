@@ -246,10 +246,12 @@ def musicPlayerWindow():
                     occurencesong=0
                     self.next_song()
                 elif (self.song_length == converted_time and self.repeat_counter == -1) or converted_time=="23:59:59":
+                    # print("Repeat Enter")
+                    slider_position=int(song_type.info.length)
+                    slider.config(to=slider_position,value=0)
                     i+=1
                     occurencesong=0
                     # self.song_duration_bar.config(text="Time is: "+str(converted_time)+" of "+str(self.song_length))
-                    
                     self.play_song()
                 else: 
                     # raw_time[i]+=1
@@ -265,7 +267,16 @@ def musicPlayerWindow():
                         slider.config(to=slider_position,value=int(slider.get()))
                         converted_time = time.strftime("%H:%M:%S",time.gmtime(slider.get()))
                         self.song_duration_bar.config(text="Time is: "+str(converted_time)+" of "+str(self.song_length))
-
+                        
+                        if (self.song_length == converted_time and self.repeat_counter == -1) or converted_time=="23:59:59":
+                            print("Reoeat Enter")
+                            slider_position=int(song_type.info.length)
+                            slider.config(to=slider_position,value=0)
+                            i+=1
+                            occurencesong=0
+                            # self.song_duration_bar.config(text="Time is: "+str(converted_time)+" of "+str(self.song_length))
+                            # self.play_song()
+                            
                         next_time=int(slider.get())+1
                         slider.config(value=next_time)
                     
