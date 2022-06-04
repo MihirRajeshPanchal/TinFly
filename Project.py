@@ -43,6 +43,7 @@ def downloadvideo():
     t=pwt.playonyt(text,open_video=False)
     print(t)
     file_path = filedialog.askdirectory()
+    print(file_path)
     videodownload(t,file_path)
 
 def googlefun():
@@ -71,10 +72,11 @@ def musicPlayerWindow():
         print(i)
     j=0
     for i in playlist:
-        convertor(i,names[j]+'.mp3')
-        j+=1
-    for i in playlist:
-        os.remove(i)
+        if os.path.isfile(names[j]+'.mp3')==False:
+            convertor(i,names[j]+'.mp3')
+            j+=1
+    # for i in playlist:
+    #     os.remove(i)
     playlist=[playlistdirname+'/'+i for i in playlistfiles if i.endswith('.mp3'or'.wav')]
     class MusicPlayer:
         def __init__(self, root, backward_img, play_img, pause_img, stop_image_btn, forward_img):
@@ -452,7 +454,15 @@ def musicPlayerWindow():
             slider.config(value=int(slider.get())-5)
             Tinfly.slideplaysong()
     
-    
+    def popout():
+        take_selected_song = Tinfly.my_list_song.get(ACTIVE)
+        print(take_selected_song)
+        try:
+            file=take_selected_song[:-3]+"mp4"
+            print(file)
+            os.startfile(file)
+        except:
+            tts("MP4 File Not Found")
     #images
     bgimg = Image.open("Photos/bg.jpg")
     resize_image = bgimg.resize((1920,1024))
@@ -478,6 +488,12 @@ def musicPlayerWindow():
     musicbg.pack()
 
     #550 x
+    popoutimg = ImageTk.PhotoImage(Image.open('Pictures/popout.png').resize((100,100)))
+    popoutbtn = Button(mpWindow, image=popoutimg, bg="#323232", activebackground="#323232", relief=RAISED, bd=3,command=popout)
+    popoutbtn.place(x=780,y=652)
+    popouttxt=Label(master=mpWindow,text="Pop Out",justify='center',font=("Helvetica"))
+    popouttxt.place(x=780,y=762,width=107)
+    
     volumedown = ImageTk.PhotoImage(Image.open('Pictures/volumedown.png').resize((100,100)))
     volumedownimg = Button(mpWindow, image=volumedown, bg="#323232", activebackground="#323232", relief=RAISED, bd=3,command=volumedownfun)
     volumedownimg.place(x=190,y=825)
