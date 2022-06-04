@@ -1,5 +1,6 @@
 import pywhatkit as pwt
 import time,pygame
+import sys
 from os import listdir
 from Convertor import *
 from os.path import isfile, join
@@ -560,6 +561,166 @@ def musicPlayerWindow():
     MusicPlay.protocol("WM_DELETE_WINDOW", closewindow)
     MusicPlay.mainloop()
 
+
+def lWindow():
+    
+    
+    def dbconnect():
+        import mysql.connector
+        try:
+            global mydb
+            mydb=mysql.connector.connect(host="localhost",user="root",password="",database="tinfly")
+            print("Connection Successful !")
+            tts("Database Connection Successful !")
+        except:
+            print("Connection Error !")
+            tts("Database Connection Error !")
+            loginWindow.destroy()
+            # sys.exit(0)
+    
+    dbconnect()
+    
+    def checklogin():   
+        # dbconnect()
+        user=usernameentry.get()
+        pwd=passwordentry.get()
+        q="select * from login"
+        flag=True
+        try:
+            status=False
+            cur=mydb.cursor()
+            cur.execute(q)
+            dbs=cur.fetchall()
+            for x in dbs:
+                if x[0]==user and x[1]==pwd:
+                    status=True
+                    break
+            if status:
+                print("Login Successful !")
+                tts("Login Successful !")
+                flag==True
+            else:
+                print("Invalid Login !")
+                tts("Invalid Login !")
+                flag=False
+        except:
+            print("Database Connection Error !")
+            tts("Database Connection Error !")
+        if flag:
+            loginWindow.destroy()
+            tts("Welcome "+user)
+        else:
+            sys.exit(0)
+            
+    global password
+    password=[]  
+              
+    def regexsolver():
+        import re
+
+        count=0
+        boolval=False
+        for p in password:
+            if len(p)>=5:
+                dmo=re.search(r"\d",p)
+                if dmo:
+                    count+=1
+                    cmo=re.search(r"[A-Z]+",p)
+                    if cmo:
+                        count+=1
+                        scmo=re.search(r"\w+\W+",p)
+                        if scmo:
+                            count+=1
+                        else:
+                            print("No Special Symbols in Password")
+                            tts("No Special Symbols in Password")
+                    else:
+                        print("No Capital letters in Password")
+                        tts("No Capital letters in Password")
+                else:
+                    print("No Digits in Password")
+                    tts("No Digits in Password")
+            else:
+                print("Password Length less than 5 character")
+                tts("Password Length less than 5 character")
+            # print(count)
+            if count==3:
+                boolval=True
+            else:
+                boolval=False
+            return boolval
+       
+    def signup():
+        user=usernameentry.get()
+        pwd=passwordentry.get()
+        password.append(pwd)
+        if regexsolver()==True:
+            password.pop()
+            mycursor = mydb.cursor()
+
+            sql = "INSERT INTO login (username, password) VALUES (%s, %s)"
+            val = (user, pwd)
+            mycursor.execute(sql, val)
+            mydb.commit()
+            tts("New User "+user+" added")
+            loginWindow.destroy()
+        else:
+            print("Password not according to pattern")
+            tts("Password not according to pattern")
+        
+    
+    loginWindow=Toplevel(root)
+    loginWindow.title("Login")
+    loginWindow.state("zoomed")
+    
+    #images
+    bgimg = Image.open("Photos/bg.jpg")
+    resize_image = bgimg.resize((1920,1024))
+    bgimg = ImageTk.PhotoImage(resize_image)
+
+    loginimg= Image.open("Photos/login.jpg")
+    resize_image = loginimg.resize((390,130))
+    loginimg = ImageTk.PhotoImage(resize_image)
+
+    signupimg= Image.open("Photos/signup.jpg")
+    resize_image = signupimg.resize((390,130))
+    signupimg = ImageTk.PhotoImage(resize_image)
+
+    tinflyimg = Image.open("Photos/tinfly.png")
+    resize_image = tinflyimg.resize((423,150))
+    tinflyimg = ImageTk.PhotoImage(resize_image)
+     
+    loginframe = Frame(master=loginWindow,width=1680,height=1440)
+    loginframe.pack()    
+    
+    loginbg = Label(master= loginframe, image = bgimg)
+    loginbg.pack()
+    
+    tinflylabel = Label(master=loginframe,text="TinFly",image = tinflyimg)
+    tinflylabel.place(x=727,y=50)
+    
+    usernametext=Label(master=loginframe,text="Enter Username",justify='center',font=("Helvetica"))
+    usernametext.place(x=400,y=275,width=205)
+    
+    usernameentry = Entry(master=loginframe, background="#ffffff", font=("Helvetica", 32))
+    usernameentry.place(x=800,y=250,width=790,height=75)
+    
+    passwordtext=Label(master=loginframe,text="Enter Password",justify='center',font=("Helvetica"))
+    passwordtext.place(x=400,y=475,width=205)
+    
+    passwordentry =Entry(master=loginframe, background="#ffffff", font=("Helvetica", 32))
+    passwordentry.place(x=800,y=450,width=790,height=75)
+    
+    loginbtn = Button(master=loginframe,text="Login",command=checklogin,image=loginimg)
+    loginbtn.place(x=350,y=650)
+    
+    signupbtn = Button(master=loginframe,text="Sign Up",command=signup,image=signupimg)
+    signupbtn.place(x=1150,y=650)
+    
+    loginWindow.mainloop()
+
+
+
 def whatsappWindow():
     
     def whatsappsend():
@@ -670,7 +831,7 @@ guilabel = Label(master= frame, image = guiimg)
 guilabel.pack()
 
 def drawerscreen():
-    profilebtn = Label(master=frame,text="Profile",image =profileimg)
+    profilebtn = Button(master=frame,text="Profile",image =profileimg,command=lWindow)
     profilebtn.place(x=240,y=100)
     profiletxt=Label(master=frame,text="Profile",justify='center',font=("Helvetica"))
     profiletxt.place(x=240,y=200,width=104)
