@@ -162,7 +162,7 @@ def musicPlayerWindow():
         def image_button_function_set(self):# Instructional buttons
             self.play_btn.config(command=lambda: self.play_song('<Return>'))
             MusicPlay.bind('<Return>',self.play_song)
-            MusicPlay.bind('<Double-Button-1>', self.play_song)
+            self.my_list_song.bind('<Double-Button-1>', self.play_song)
 
             self.pause_btn.config(command=lambda: self.pause_song('<space>'))
             MusicPlay.bind('<space>',self.pause_song)
@@ -201,6 +201,7 @@ def musicPlayerWindow():
             try:
                 # Song Load and Play
                 take_selected_song = self.my_list_song.get(ACTIVE)
+                # print(take_selected_song)
                 pygame.mixer.music.load(take_selected_song)
                 pygame.mixer.music.play(loops=self.repeat_counter)
 
@@ -269,7 +270,7 @@ def musicPlayerWindow():
                         self.song_duration_bar.config(text="Time is: "+str(converted_time)+" of "+str(self.song_length))
                         
                         if (self.song_length == converted_time and self.repeat_counter == -1) or converted_time=="23:59:59":
-                            print("Reoeat Enter")
+                            print("Repeat Enter")
                             slider_position=int(song_type.info.length)
                             slider.config(to=slider_position,value=0)
                             i+=1
@@ -438,7 +439,20 @@ def musicPlayerWindow():
     def closewindow():
         Tinfly.stop_song()
         MusicPlay.destroy()
+    
+    def forwardby5():
+        slider.config(value=int(slider.get())+5)
+        Tinfly.slideplaysong()
         
+    def rewindby5():
+        if (int(slider.get())-5)<=0:
+            slider.config(value=0)
+            Tinfly.slideplaysong()
+        else:
+            slider.config(value=int(slider.get())-5)
+            Tinfly.slideplaysong()
+    
+    
     #images
     bgimg = Image.open("Photos/bg.jpg")
     resize_image = bgimg.resize((1920,1024))
@@ -466,15 +480,21 @@ def musicPlayerWindow():
     #550 x
     volumedown = ImageTk.PhotoImage(Image.open('Pictures/volumedown.png').resize((100,100)))
     volumedownimg = Button(mpWindow, image=volumedown, bg="#323232", activebackground="#323232", relief=RAISED, bd=3,command=volumedownfun)
-    volumedownimg.place(x=370,y=825)
+    volumedownimg.place(x=190,y=825)
     volumedowntxt=Label(master=mpWindow,text="Volume Down",justify='center',font=("Helvetica"))
-    volumedowntxt.place(x=370,y=930,width=107)
+    volumedowntxt.place(x=190,y=930,width=107)
 
     backward_image_take = ImageTk.PhotoImage(Image.open('Pictures/backward.png').resize((100,100)))
     backward_btn_img = Button(mpWindow, image=backward_image_take, bg="#323232", activebackground="#323232", relief=RAISED, bd=3)
-    backward_btn_img.place(x=550,y=825)
+    backward_btn_img.place(x=370,y=825)
     backward_btntxt=Label(master=mpWindow,text="Previous Song",justify='center',font=("Helvetica"))
-    backward_btntxt.place(x=550,y=930,width=107)
+    backward_btntxt.place(x=370,y=930,width=107)
+    
+    decrement5imgtake = ImageTk.PhotoImage(Image.open('Pictures/5decrement.jpg').resize((100,100)))
+    decrement5img = Button(mpWindow,image=decrement5imgtake,bg="#323232", activebackground="#323232", relief=RAISED,bd=3,command=rewindby5)
+    decrement5img.place(x=550,y=825)
+    decrement5txt=Label(master=mpWindow,text="Rewind",justify='center',font=("Helvetica"))
+    decrement5txt.place(x=550,y=930,width=107)  
     
     play_image_take = ImageTk.PhotoImage(Image.open('Pictures/play.png').resize((100,100)))
     play_btn_img = Button(mpWindow,image=play_image_take,bg="#323232", activebackground="#323232", relief=RAISED,bd=3)
@@ -495,17 +515,23 @@ def musicPlayerWindow():
     stopbtntxt.place(x=1090,y=930,width=107)
 
     #1270 x 
+    increment5imgtake = ImageTk.PhotoImage(Image.open('Pictures/5increment.jpg').resize((100,100)))
+    increment5img = Button(mpWindow,image=increment5imgtake,bg="#323232", activebackground="#323232", relief=RAISED,bd=3,command=forwardby5)
+    increment5img.place(x=1270,y=825)
+    increment5txt=Label(master=mpWindow,text="Forward",justify='center',font=("Helvetica"))
+    increment5txt.place(x=1270,y=930,width=107)  
+     
     forward_image_take = ImageTk.PhotoImage(Image.open('Pictures/forward.png').resize((100,100)))
     forward_btn_img = Button(mpWindow,image=forward_image_take,bg="#323232", activebackground="#323232", relief=RAISED,bd=3)
-    forward_btn_img.place(x=1270,y=825)
+    forward_btn_img.place(x=1450,y=825)
     forwardbtntxt=Label(master=mpWindow,text="Next Song",justify='center',font=("Helvetica"))
-    forwardbtntxt.place(x=1270,y=930,width=107)   
+    forwardbtntxt.place(x=1450,y=930,width=107)   
 
     volumeup = ImageTk.PhotoImage(Image.open('Pictures/volumeup.png').resize((100,100)))
     volumeupimg = Button(mpWindow,image=volumeup,bg="#323232", activebackground="#323232", relief=RAISED,bd=3,command=volumeupfun)
-    volumeupimg.place(x=1450,y=825)
+    volumeupimg.place(x=1630,y=825)
     volumeuptxt=Label(master=mpWindow,text="Volume Up",justify='center',font=("Helvetica"))
-    volumeuptxt.place(x=1450,y=930,width=107)  
+    volumeuptxt.place(x=1630,y=930,width=107)  
     
     def slide(x):
         # Tinfly.pause_song()
