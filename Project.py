@@ -2,11 +2,11 @@ import pywhatkit as pwt
 import time,pygame
 import sys
 from os import listdir
-from Convertor import *
 from os.path import isfile, join
 from tkinter import filedialog,messagebox,colorchooser, ttk
 from tkinter import *
 from PIL import ImageTk, Image
+from Convertor import *
 from PlaySingleMusic import *
 from TTS import *
 from STT import *
@@ -67,18 +67,24 @@ def infofun():
 def musicPlayerWindow():
     playlistdirname = filedialog.askdirectory()
     playlistfiles = [f for f in listdir(playlistdirname) if isfile(join(playlistdirname, f))]
-    playlist=[playlistdirname+'/'+i for i in playlistfiles if i.endswith('.mp4'or'.wav')]
+    playlist=[playlistdirname+'/'+i for i in playlistfiles if i.endswith('.mp4')]
     names=[i[:-4] for i in playlist]
-    for i in names:
-        print(i)
+    # print(playlistfiles)
+    # for i in names:
+    #     print(i)
+    convertedsonglist=[]
     j=0
     for i in playlist:
         if os.path.isfile(names[j]+'.mp3')==False:
             convertor(i,names[j]+'.mp3')
-            j+=1
+            convertedsonglist.append(names[j]+".mp3")
+        j+=1
     # for i in playlist:
     #     os.remove(i)
-    playlist=[playlistdirname+'/'+i for i in playlistfiles if i.endswith('.mp3'or'.wav')]
+    playlist=[playlistdirname+'/'+i for i in playlistfiles if i.endswith('.mp3')]
+    playlist+=convertedsonglist
+    for i in playlist:
+        print(i)
     class MusicPlayer:
         def __init__(self, root, backward_img, play_img, pause_img, stop_image_btn, forward_img):
             self.mpWindow = root
