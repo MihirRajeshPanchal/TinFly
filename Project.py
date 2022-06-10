@@ -714,7 +714,7 @@ def lWindow():
     passwordtext=Label(master=loginframe,text="Enter Password",justify='center',font=("Helvetica"))
     passwordtext.place(x=400,y=475,width=205)
     
-    passwordentry =Entry(master=loginframe, background="#ffffff", font=("Helvetica", 32))
+    passwordentry =Entry(master=loginframe, background="#ffffff", font=("Helvetica", 32),show="*")
     passwordentry.place(x=800,y=450,width=790,height=75)
     
     loginbtn = Button(master=loginframe,text="Login",command=checklogin,image=loginimg)
