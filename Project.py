@@ -42,9 +42,9 @@ def downloadvideo():
     tts("Video Download")
     text=query.get()
     t=pwt.playonyt(text,open_video=False)
-    print(t)
+    # print(t)
     file_path = filedialog.askdirectory()
-    print(file_path)
+    # print(file_path)
     videodownload(t,file_path)
 
 def googlefun():
@@ -83,8 +83,8 @@ def musicPlayerWindow():
     #     os.remove(i)
     playlist=[playlistdirname+'/'+i for i in playlistfiles if i.endswith('.mp3')]
     playlist+=convertedsonglist
-    for i in playlist:
-        print(i)
+    # for i in playlist:
+    #     print(i)
     class MusicPlayer:
         def __init__(self, root, backward_img, play_img, pause_img, stop_image_btn, forward_img):
             self.mpWindow = root
@@ -293,9 +293,9 @@ def musicPlayerWindow():
                     i+=1
                     self.song_duration_bar.after(1000,self.song_duration_time)# Recursive function call after 1 sec = 1000ms
             except Exception as e:
-                print(i)
-                print(raw_time)
-                print(e)
+                # print(i)
+                # print(raw_time)
+                # print(e)
                 tts("Error in song duration")
                 print("Error in song duration")        
                 self.next_song()
@@ -463,7 +463,7 @@ def musicPlayerWindow():
     
     def popout():
         take_selected_song = Tinfly.my_list_song.get(ACTIVE)
-        print(take_selected_song)
+        # print(take_selected_song)
         try:
             file=take_selected_song[:-3]+"mp4"
             print(file)
